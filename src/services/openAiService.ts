@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Configuration, OpenAIApi } from 'openai';
-import { createHttpError, createLogger } from 'express-zod-api';
+import { createHttpError } from 'express-zod-api';
 
 class OpenAiService {
     async isHateSpeech(text: string): Promise<boolean> {
