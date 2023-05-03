@@ -1,9 +1,10 @@
-import {z} from "zod"
+import { z } from 'zod';
 
-export const inputSchema = z.object({
-    name: z.string().optional(),
-})
+export const hateSpeechInputSchema = z.object({
+    text: z.string().min(1).max(1000),
+});
 
-export const outputSchema = z.object({
-    greetings: z.string(),
-})
+// z boolean
+export const hateSpeechOutputSchema = z.object({
+    hateSpeech: z.boolean(),
+});

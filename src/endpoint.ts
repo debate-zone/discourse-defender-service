@@ -1,12 +1,15 @@
 import { defaultEndpointsFactory } from 'express-zod-api';
-import { inputSchema, outputSchema } from './zodSchema';
+import { hateSpeechInputSchema, hateSpeechOutputSchema } from './zodSchema';
+import { hateSpeechService } from './services/hateSpeechService';
 
-export const helloWorldEndpoint = defaultEndpointsFactory.build({
-    method: 'get',
-    input: inputSchema,
-    output: outputSchema,
+export const hateSpeechEndpoint = defaultEndpointsFactory.build({
+    method: 'post',
+    input: hateSpeechInputSchema,
+    output: hateSpeechOutputSchema,
     handler: async ({ input, options, logger }) => {
         logger.debug('Options:', options);
-        return { greetings: `Hello, ${input.name || 'World'}. Happy coding!` };
+
+        const hateSpeech = await hateSpeechService.isHateSpeech(input.text);
+        return { hateSpeech };
     },
 });
