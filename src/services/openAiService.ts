@@ -7,29 +7,42 @@ class OpenAiService {
         const configuration = new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
         });
+
         const openai = new OpenAIApi(configuration);
 
         const prompt =
             'Is this hate speech?\n' + text + '\n' + 'Yes' + '\n' + 'No' + '\n';
+        const result = await this.makeHateSpeechRequest(openai, prompt);
 
+        return this.parseResult(result);
+    }
+
+    private async makeHateSpeechRequest(openai: OpenAIApi, prompt: string) {
         try {
-            const result = await openai.createCompletion({
+            return await openai.createChatCompletion({
                 model: process.env.OPENAI_MODEL_ID!,
-                prompt: prompt,
-                temperature: 0,
-                max_tokens: 7,
+                messages: [
+                    {
+                        role: 'system',
+                        content: prompt,
+                    },
+                ],
+                temperature: 0.2,
+                max_tokens: 1,
             });
-
-            if (result.data.choices[0].text) {
-                return result.data.choices[0].text.includes('Yes');
-            } else {
-                return false;
-            }
         } catch (error: any) {
             throw createHttpError(
                 error.response.status,
                 error.response.statusText,
             );
+        }
+    }
+
+    private parseResult(result: any): boolean {
+        if (result.data?.choices[0]?.message?.content) {
+            return result.data.choices[0].message.content === 'Yes';
+        } else {
+            throw createHttpError(500, 'No data from model.');
         }
     }
 }
